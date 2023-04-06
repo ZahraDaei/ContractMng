@@ -1,0 +1,98 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<# string filename = this.Host.ResolvePath("filename.txt");
+  IEnumerable<string> properties = File.ReadLines(filename);
+#>
+<# // This code runs in the text template:
+  foreach (string propertyNames in properties)  { 
+
+  char[] spearator = { ' ' };
+  String[] propertyName=propertyNames.Split(spearator);
+  #>
+
+using ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Commands.Create;
+using ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Commands.Delete;
+using ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Commands.Update;
+using ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Queries.Get;
+using ContractMng.Application.WeatherForecasts.Queries.GetWeatherForecasts;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ContractMng.WebUI.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class <#=propertyName[1]#>Controller : ApiControllerBase
+    {
+       
+
+        private readonly ILogger<<#=propertyName[1]#>Controller> _logger;
+
+        public <#=propertyName[1]#>Controller(ILogger<<#=propertyName[1]#>Controller> logger)
+        {
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<<#=propertyName[1]#>Vm>> Get()
+        {
+
+            return await Mediator.Send(new Get<#=propertyName[1]#>Query());
+
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<int>> Create(Create<#=propertyName[1]#>Command command)
+        {
+
+            return await Mediator.Send(command);           
+
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id,Update<#=propertyName[1]#>Command command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest();
+            }
+
+                await Mediator.Send(command);
+            return NoContent();
+
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+
+             await Mediator.Send(new Delete<#=propertyName[1]#>Command() { Id=id});
+            return NoContent();
+
+        }
+    }
+}
+
+
+
+
+<#
+  SaveOutput(propertyName[1]+ "Controller.cs");
+ } #>
+
+
+
+<#+
+private void SaveOutput(string outputFileName) {
+var projectPath = Host.ResolveAssemblyReference("$(ProjectDir)");
+var path = projectPath +"Controllers";
+  string outputFilePath = Path.Combine(path, outputFileName);
+  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+  this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>

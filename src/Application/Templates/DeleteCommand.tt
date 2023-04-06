@@ -1,0 +1,91 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<# string filename = this.Host.ResolvePath("filename.txt");
+  IEnumerable<string> properties = File.ReadLines(filename);
+#>
+<# // This code runs in the text template:
+  foreach (string propertyNames in properties)  { 
+
+  char[] spearator = { ' ' };
+  String[] propertyName=propertyNames.Split(spearator);
+  #>
+using ContractMng.Application.Common.Interfaces;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ContractMng.Domain.Entities;
+using ContractMng.Application.Common.Exceptions;
+
+
+namespace ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Commands.Delete
+{
+    public class Delete<#=propertyName[1]#>Command : IRequest
+    {
+             public int Id { get; set; }
+    }
+
+    public class Delete<#=propertyName[1]#>CommandHandler : IRequestHandler<Delete<#=propertyName[1]#>Command>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMediator _mediator;
+
+        public Delete<#=propertyName[1]#>CommandHandler(IApplicationDbContext context, IMediator mediator)
+        {
+            _context = context;
+            _mediator = mediator;
+        }
+
+        public async Task<Unit> Handle(Delete<#=propertyName[1]#>Command request, CancellationToken cancellationToken)
+        {
+            try{
+             var entity = await _context.<#=propertyName[0]#>.FindAsync(request.Id);
+
+            if (entity == null)
+            {
+                throw new NotFoundException(nameof(<#=propertyName[1]#>), request.Id);
+            }
+
+             <#
+            if(propertyName[2]=="ContractMain"){
+            #>
+              entity.Deleted=true;
+               
+            <#}
+            else{#>
+
+            _context.<#=propertyName[0]#>.Remove(entity);
+            <#}#>
+
+             
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
+            }
+            catch(Exception){
+            throw;
+            }
+        }
+    }
+}
+
+<#
+  SaveOutput("Delete"+propertyName[1]+ "Command.cs",propertyName[0],propertyName[2]);
+ } #>
+
+
+
+<#+
+private void SaveOutput(string outputFileName, string propertyName,string type) {
+var projectPath = Host.ResolveAssemblyReference("$(ProjectDir)");
+var path = projectPath +type+"\\"+ propertyName+"\\Commands"+"\\Delete";
+  string outputFilePath = Path.Combine(path, outputFileName);
+  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+  this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>

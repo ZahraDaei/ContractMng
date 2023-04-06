@@ -1,0 +1,93 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<# string filename = this.Host.ResolvePath("filename.txt");
+  IEnumerable<string> properties = File.ReadLines(filename);
+#>
+<# // This code runs in the text template:
+  foreach (string propertyNames in properties)  { 
+
+  char[] spearator = { ' ' };
+  String[] propertyName=propertyNames.Split(spearator);
+  #>
+using ContractMng.Application.Common.Interfaces;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ContractMng.Domain.Entities;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Queries.Get
+{
+    public class Get<#=propertyName[1]#>Query : IRequest<<#=propertyName[1]#>Vm>
+    {
+     
+
+    }
+
+    public class Get<#=propertyName[1]#>QueryHandler : IRequestHandler<Get<#=propertyName[1]#>Query, <#=propertyName[1]#>Vm>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMediator _mediator;
+         private readonly IMapper _mapper;
+
+        public Get<#=propertyName[1]#>QueryHandler(IApplicationDbContext context, IMediator mediator, IMapper mapper)
+        {
+            _context = context;
+            _mediator = mediator;
+             _mapper = mapper;
+        }
+
+        public async Task<<#=propertyName[1]#>Vm> Handle(Get<#=propertyName[1]#>Query request, CancellationToken cancellationToken)
+        {
+                  
+           try
+            {
+            <#
+            if(propertyName[2]=="ContractMain"){
+            #>
+               var dto = await _context.<#=propertyName[0]#>.Where(i=>i.Deleted!=true)
+                            .ProjectTo<<#=propertyName[1]#>Dto>(_mapper.ConfigurationProvider).ToListAsync();
+               
+            <#}
+            else{#>
+
+             var dto = await _context.<#=propertyName[0]#>
+                            .ProjectTo<<#=propertyName[1]#>Dto>(_mapper.ConfigurationProvider).ToListAsync();
+            <#}#>
+         
+              
+                return new <#=propertyName[1]#>Vm(){<#=propertyName[1]#>Dtos=dto};
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+    }
+}
+
+<#
+  SaveOutput("Get"+propertyName[1]+ "Query.cs",propertyName[0],propertyName[2]);
+ } #>
+
+
+
+<#+
+private void SaveOutput(string outputFileName, string propertyName,string type) {
+var projectPath = Host.ResolveAssemblyReference("$(ProjectDir)");
+var path = projectPath +type+"\\"+ propertyName+"\\Queries"+"\\Get";
+  string outputFilePath = Path.Combine(path, outputFileName);
+  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+  this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>

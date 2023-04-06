@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>ContractMng.Domain</RootNamespace>
+        <AssemblyName>ContractMng.Domain</AssemblyName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Entities\TodoItem.cs" />
+      <Compile Remove="Entities\TodoList.cs" />
+    </ItemGroup>
+
+</Project>

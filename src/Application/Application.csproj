@@ -1,0 +1,110 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>ContractMng.Application</RootNamespace>
+        <AssemblyName>ContractMng.Application</AssemblyName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="TodoItems\**" />
+      <Compile Remove="TodoLists\**" />
+      <EmbeddedResource Remove="TodoItems\**" />
+      <EmbeddedResource Remove="TodoLists\**" />
+      <None Remove="TodoItems\**" />
+      <None Remove="TodoLists\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Common\Interfaces\IFormFile.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.4" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Templates\CreateCommand.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>CreateCommand.cs</LastGenOutput>
+      </None>
+      <None Update="Templates\DeleteCommand.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>DeleteCommand.cs</LastGenOutput>
+      </None>
+      <None Update="Templates\Dto.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>Dto.cs</LastGenOutput>
+      </None>
+      <None Update="Templates\Report.tt">
+        <LastGenOutput>Report.cs</LastGenOutput>
+        <Generator>TextTemplatingFileGenerator</Generator>
+      </None>
+      <None Update="Templates\GetQuery.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>GetQuery.cs</LastGenOutput>
+      </None>
+      <None Update="Templates\UpdateCommand.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>UpdateCommand.cs</LastGenOutput>
+      </None>
+      <None Update="Templates\Vm.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>Vm.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Templates\CreateCommand.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>CreateCommand.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\DeleteCommand.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>DeleteCommand.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\Dto.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Dto.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\Report.cs">
+        <DependentUpon>Report.tt</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+      <Compile Update="Templates\GetQuery.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>GetQuery.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\UpdateCommand.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>UpdateCommand.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\Vm.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Vm.tt</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

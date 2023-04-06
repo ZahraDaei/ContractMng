@@ -1,0 +1,82 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<# string report = this.Host.ResolvePath("report.txt");
+  IEnumerable<string> properties = File.ReadLines(report);
+#>
+<# // This code runs in the text template:
+  foreach (string propertyNames in properties)  { 
+
+  char[] spearator = { ' ' };
+  String[] propertyName=propertyNames.Split(spearator);
+  #>
+using ContractMng.Application.Common.Interfaces;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ContractMng.Domain.Entities;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace ContractMng.Application.Reports.<#=propertyName[0]#>.Get
+{
+    public class <#=propertyName[1]#>Query : IRequest<<#=propertyName[1]#>Vm>
+    {
+     
+
+    }
+
+    public class <#=propertyName[1]#>QueryHandler : IRequestHandler<<#=propertyName[1]#>Query, <#=propertyName[1]#>Vm>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMediator _mediator;
+         private readonly IMapper _mapper;
+
+        public <#=propertyName[1]#>QueryHandler(IApplicationDbContext context, IMediator mediator, IMapper mapper)
+        {
+            _context = context;
+            _mediator = mediator;
+             _mapper = mapper;
+        }
+
+        public async Task<<#=propertyName[1]#>Vm> Handle(<#=propertyName[1]#>Query request, CancellationToken cancellationToken)
+        {
+                  
+           try
+            {
+           
+         
+              
+                return new <#=propertyName[1]#>Vm(){<#=propertyName[1]#>Dtos=dto};
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+    }
+}
+
+<#
+  SaveOutput(propertyName[1]+ "Query.cs",propertyName[0]);
+ } #>
+
+
+
+<#+
+private void SaveOutput(string outputFileName, string propertyName) {
+var projectPath = Host.ResolveAssemblyReference("$(ProjectDir)");
+var path = projectPath +"Reports\\"+ propertyName+"\\Get";
+  string outputFilePath = Path.Combine(path, outputFileName);
+  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+  this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>

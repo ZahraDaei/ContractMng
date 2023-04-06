@@ -1,0 +1,3 @@
+﻿ReportByParties ReportByParty 
+ReportByPayments ReportByPayment 
+ReportByStatuses ReportByStatus

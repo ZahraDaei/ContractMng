@@ -1,0 +1,7 @@
+﻿ContractBudgets ContractBudget
+ContractDocuments ContractDocument
+ContractLastStatuses ContractLastStatus
+ContractLetters ContractLetter
+ContractParties ContractParty 
+ContractPaymentMethods ContractPaymentMethod
+ContractTypes ContractType

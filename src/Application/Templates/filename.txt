@@ -1,0 +1,11 @@
+﻿Contracts Contract ContractMain
+LastStatuses LastStatus ContractMain
+Letters Letter ContractMain
+TechnicalAttachments TechnicalAttachment ContractMain
+ContractBudgets ContractBudget ContractBase
+ContractDocuments ContractDocument ContractBase
+ContractLastStatuses ContractLastStatus ContractBase
+ContractLetters ContractLetter ContractBase
+ContractParties ContractParty ContractBase
+ContractPaymentMethods ContractPaymentMethod ContractBase
+ContractTypes ContractType ContractBase

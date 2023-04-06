@@ -1,0 +1,49 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<# string filename = this.Host.ResolvePath("filename.txt");
+  IEnumerable<string> properties = File.ReadLines(filename);
+#>
+<# // This code runs in the text template:
+  foreach (string propertyNames in properties)  { 
+
+  char[] spearator = { ' ' };
+  String[] propertyName=propertyNames.Split(spearator);
+  #>
+using ContractMng.Application.Common.Interfaces;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ContractMng.Domain.Entities;
+using AutoMapper;
+using ContractMng.Application.Common.Mappings;
+
+
+
+namespace ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Queries.Get
+{
+    public class <#=propertyName[1]#>Dto : IMapFrom<<#=propertyName[1]#>>
+    {
+         
+    }   
+}
+<#
+  SaveOutput(propertyName[1]+ "Dto.cs",propertyName[0],propertyName[2]);
+ } #>
+
+
+
+<#+
+private void SaveOutput(string outputFileName, string propertyName,string type) {
+var projectPath = Host.ResolveAssemblyReference("$(ProjectDir)");
+var path = projectPath +type+"\\"+ propertyName+"\\Queries"+"\\Get";
+  string outputFilePath = Path.Combine(path, outputFileName);
+  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+  this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>

@@ -1,0 +1,75 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<# string filename = this.Host.ResolvePath("filename.txt");
+  IEnumerable<string> properties = File.ReadLines(filename);
+#>
+<# // This code runs in the text template:
+  foreach (string propertyNames in properties)  { 
+
+
+  char[] spearator = { ' ' };
+  String[] propertyName=propertyNames.Split(spearator);
+  #>
+using ContractMng.Application.Common.Interfaces;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ContractMng.Domain.Entities;
+
+
+namespace ContractMng.Application.<#=propertyName[2]#>.<#=propertyName[0]#>.Commands.Create
+{
+    public class Create<#=propertyName[1]#>Command : IRequest<int>
+    {
+     
+
+    }
+
+    public class Create<#=propertyName[1]#>CommandHandler : IRequestHandler<Create<#=propertyName[1]#>Command, int>
+    {
+        private readonly IApplicationDbContext _context;
+        private readonly IMediator _mediator;
+
+        public Create<#=propertyName[1]#>CommandHandler(IApplicationDbContext context, IMediator mediator)
+        {
+            _context = context;
+            _mediator = mediator;
+        }
+
+        public async Task<int> Handle(Create<#=propertyName[1]#>Command request, CancellationToken cancellationToken)
+        {
+         try{
+         
+            var entity= new <#=propertyName[1]#>();
+             await _context.<#=propertyName[0]#>.AddAsync(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return entity.Id;
+         }
+         catch(Exception){
+         throw;
+         }
+        }
+    }
+}
+
+<#
+  SaveOutput("Create"+propertyName[1]+ "Command.cs",propertyName[0],propertyName[2]);
+ } #>
+
+
+<#+
+private void SaveOutput(string outputFileName, string propertyName,string type) {
+var projectPath = Host.ResolveAssemblyReference("$(ProjectDir)");
+var path = projectPath +type+"\\"+ propertyName+"\\Commands"+"\\Create";
+  string outputFilePath = Path.Combine(path, outputFileName);
+  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+  this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>
